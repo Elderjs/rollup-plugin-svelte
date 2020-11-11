@@ -220,7 +220,7 @@ test('intercepts warnings', async () => {
 	assert.equal(handled.map(w => w.code), ['a11y-hidden']);
 });
 
-test('handles filenames that happen to contain .svelte', async () => {
+test('handles filenames that happen to contain ".svelte"', async () => {
 	sander.rimrafSync('test/filename-test/dist');
 	sander.mkdirSync('test/filename-test/dist');
 
@@ -266,9 +266,11 @@ test('handles filenames that happen to contain .svelte', async () => {
 		throw err;
 	}
 
-	assert.match(
-		fs.readFileSync('test/filename-test/dist/bundle.css', 'utf8'),
-		'h1.svelte-bt9zrl{color:red}'
+	const normalize = file => fs.readFileSync(file, 'utf8').replace(/\r?\n/g, '\n');
+
+	assert.fixture(
+		normalize('test/filename-test/dist/bundle.css'),
+		normalize('test/filename-test/expected/bundle.css'),
 	);
 });
 
